@@ -1,0 +1,152 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+main {
+  position: relative;
+}
+
+#self-view-video, #self-view-canvas {
+  width: 100%;
+  height: auto;
+}
+
+#participant-canvas {
+  max-height: 100vh;
+  max-width: 100vw;
+}
+
+small#error {
+  display: none;
+  background-color: #EF476F;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  width: 189px;
+  text-align: center;
+}
+
+video, #self-view-canvas {
+  border-radius: 20px;
+}
+
+input {
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  border: none;
+  border: 2px solid #073B4C;
+  width: 189px;
+}
+
+input:focus-visible {
+  outline-color: #118AB2;
+}
+
+button {
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  width: 189px;
+  text-align: center;
+  border-radius: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.controls button {
+  margin-top: 20px;
+}
+
+#landing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#landing h2 {
+  margin-top: 0;
+}
+
+small.zoom {
+  margin-top: 20px;
+  font-style: italic;
+}
+
+#session, #muteAudio, #unmuteAudio, #stopVideo, #self-view-video, #participant-canvas, #self-view-canvas {
+  display: none;
+}
+
+#session {
+  height: 100vh;
+  align-items: center;
+  background-color: #118AB2;
+}
+
+a {
+  color: #118AB2;
+}
+
+.primary {
+  background-color: #073B4C;
+}
+
+.leave {
+  background-color: #EF476F;
+}
+
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 1;
+}
+
+.participant {
+  background-color: #118AB2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-height: 100vh;
+  margin: auto;
+}
+
+.participant h3 {
+  color: #ffffff;
+}
+
+.self {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 20%;
+  aspect-ratio: 16/9;
+  background-color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+}
+
+.self h3 {
+  color: #ffffff;
+}
+
+.controls {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>1:1 Video Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta http-equiv="origin-trial" content="" />
+  </head>
+  <body>
+    <main>
+      <div id="landing">
+        <h2>1:1 Video Chat 💬</h2>
+        <small id="error">Session full, join another.</small>
+        <input type="text" placeholder="😃 Your Name" id="userName">
+        <input type="text" placeholder="🚪 Session Name" id="sessionName">
+        <input type="text" placeholder="🔑 Session Passcode" id="sessionPasscode">
+        <button onClick="getSignature()" class="primary" id="getSignature">Join Session</button>
+        <small class="zoom">Powered by the <a href="https://marketplace.zoom.us/docs/sdk/video/introduction/" target="_blank">Zoom Video SDK</a></small>
+      </div>
+
+      <div id="session">
+        <div class="self">
+          <h3 id="self-view-name">😃 Me</h3>
+          <video id="self-view-video" width="1920" height="1080"></video>
+          <canvas id="self-view-canvas" width="1920" height="1080"></canvas>
+        </div>
+        <div class="participant">
+          <h3 id="participant-name">⏳ Waiting for participant to join...</h3>
+          <canvas id="participant-canvas" width="1920" height="1080"></canvas>
+        </div>
+
+        <div class="controls">
+
+          <button onClick="startAudio()" class="primary" id="startAudio">Start Audio</button>
+          <button onClick="muteAudio()" class="primary" id="muteAudio">Mute</button>
+          <button onClick="unmuteAudio()" class="primary" id="unmuteAudio">Unmute</button>
+
+          <button onClick="startVideo()" class="primary" id="startVideo">Start Video</button>
+          <button onClick="stopVideo()" class="primary" id="stopVideo">Stop Video</button>
+
+          <button onClick="leaveSession()" class="leave" id="leaveSession">Leave Session</button>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://source.zoom.us/videosdk/zoom-video-1.3.0.min.js"></script>
+    <script type="text/javascript" src="scripts.js"></script>
+  </body>
+</html>
