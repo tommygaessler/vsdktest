@@ -218,3 +218,7 @@ zmClient.on('user-removed', (payload) => {
     }
   }
 })
+
+zmClient.on('active-share-change', (payload) => {
+  console.log(payload)
+})
