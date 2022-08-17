@@ -47,6 +47,8 @@ function joinSession(signature) {
 
     zmStream = zmClient.getMediaStream()
 
+    console.log(zmClient.getSessionInfo())
+
     if(zmClient.getAllUser().length > 2) {
       document.querySelector('#error').style.display = 'block'
       setTimeout(() => {
