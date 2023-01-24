@@ -6,7 +6,7 @@ let audioDecode
 let audioEncode
 
 // setup your signature endpoint here: https://github.com/zoom/videosdk-sample-signature-node.js
-let signatureEndpoint = 'https://videosdk-sample-signature.herokuapp.com'
+let signatureEndpoint = 'https://or116ttpz8.execute-api.us-west-1.amazonaws.com/default/videosdk'
 let sessionName = ''
 let sessionPasscode = ''
 let userName = 'Participant' + Math.floor(Math.random() * 100)
@@ -24,9 +24,6 @@ function getSignature() {
 
   fetch(signatureEndpoint, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({
       sessionName: document.getElementById('sessionName').value || sessionName,
       role: role,

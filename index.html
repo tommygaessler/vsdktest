@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>1:1 Video Chat</title>
     <link rel="stylesheet" href="styles.css">
-    <meta http-equiv="origin-trial" content="" />
+    <meta http-equiv="origin-trial" content="AgrLhNGM/MQUMTHtJgkK3Zm94Wf4Eq7eFLbwYpYgRk+FoJjOVyjM4mkmEIroenlNO2V8akU9LYzDoyUpWb1uqAUAAABgeyJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJmZWF0dXJlIjoiVW5yZXN0cmljdGVkU2hhcmVkQXJyYXlCdWZmZXIiLCJleHBpcnkiOjE2ODgwODMxOTl9" />
   </head>
   <body>
     <main>
@@ -32,6 +32,8 @@
 
         <div class="controls">
 
+          <button onClick="updateBackground()" class="primary">Update Background</button>
+
           <button onClick="startAudio()" class="primary" id="startAudio">Start Audio</button>
           <button onClick="muteAudio()" class="primary" id="muteAudio">Mute</button>
           <button onClick="unmuteAudio()" class="primary" id="unmuteAudio">Unmute</button>
@@ -44,7 +46,7 @@
       </div>
     </main>
 
-    <script src="https://source.zoom.us/videosdk/zoom-video-1.4.0.min.js"></script>
+    <script src="https://source.zoom.us/videosdk/zoom-video-1.6.0.min.js"></script>
     <script type="text/javascript" src="scripts.js"></script>
   </body>
 </html>
