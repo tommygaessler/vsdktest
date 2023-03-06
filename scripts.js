@@ -104,7 +104,7 @@ function startVideo() {
         document.querySelector('#stopVideo').style.display = 'inline-block'
   
         document.querySelector('#startVideo').textContent = 'Start Video'
-        // document.querySelector('#startVideo').disabled = false
+        document.querySelector('#startVideo').disabled = false
       // }
     }).catch((error) => {
       console.log(error)
