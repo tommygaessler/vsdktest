@@ -17,7 +17,7 @@ input, button {
 
 #self-view-video, #self-view-canvas {
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 #participant-canvas {
