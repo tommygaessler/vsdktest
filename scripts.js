@@ -13,6 +13,9 @@ let userName = 'Participant' + Math.floor(Math.random() * 100)
 let role = 1
 let userIdentity
 let sessionKey
+let geoRegions
+let cloudRecordingOption
+let cloudRecordingElection
 
 zmClient.init('US-en', 'CDN')
 
@@ -22,13 +25,26 @@ function getSignature() {
   document.querySelector('#getSignature').disabled = true
   document.querySelector('#error').style.display = 'none'
 
+  console.log(JSON.stringify({
+    sessionName: document.getElementById('sessionName').value || sessionName,
+    role: role,
+    userIdentity: userIdentity,
+    sessionKey: sessionKey,
+    geoRegions: geoRegions,
+    cloudRecordingOption: cloudRecordingOption,
+    cloudRecordingElection: cloudRecordingElection
+  }))
+
   fetch(signatureEndpoint, {
     method: 'POST',
     body: JSON.stringify({
       sessionName: document.getElementById('sessionName').value || sessionName,
       role: role,
       userIdentity: userIdentity,
-      sessionKey: sessionKey
+      sessionKey: sessionKey,
+      geoRegions: geoRegions,
+      cloudRecordingOption: cloudRecordingOption,
+      cloudRecordingElection: cloudRecordingElection
     })
   }).then((response) => {
     return response.json()
@@ -64,19 +80,37 @@ function startVideo() {
   document.querySelector('#startVideo').textContent = 'Starting Video...'
   document.querySelector('#startVideo').disabled = true
 
-  if(!!window.chrome && !(typeof SharedArrayBuffer === 'function')) {
-    zmStream.startVideo({ videoElement: document.querySelector('#self-view-video'), mirrored: true }).then(() => {
-      document.querySelector('#self-view-video').style.display = 'block'
-      document.querySelector('#self-view-name').style.display = 'none'
+  if(zmStream.isRenderSelfViewWithVideoElement()) {
+    zmStream.startVideo({ videoElement: document.querySelector('#self-view-video'), mirrored: true, hd: true }).then(() => {
 
-      document.querySelector('#startVideo').style.display = 'none'
-      document.querySelector('#stopVideo').style.display = 'inline-block'
+      // if(!(typeof MediaStreamTrackProcessor === 'function')) {
+      //   zmStream.renderVideo(document.querySelector('#self-view-canvas'), zmClient.getCurrentUserInfo().userId, 1920, 1080, 0, 0, 3).then(() => {
+      //     document.querySelector('#self-view-canvas').style.display = 'block'
+      //     document.querySelector('#self-view-name').style.display = 'none'
 
-      document.querySelector('#startVideo').textContent = 'Start Video'
-      document.querySelector('#startVideo').disabled = false
+      //     document.querySelector('#startVideo').style.display = 'none'
+      //     document.querySelector('#stopVideo').style.display = 'inline-block'
+
+      //     document.querySelector('#startVideo').textContent = 'Start Video'
+      //     document.querySelector('#startVideo').disabled = false
+      //   }).catch((error) => {
+      //     console.log(error)
+      //   })
+      // } else {
+        document.querySelector('#self-view-video').style.display = 'block'
+        document.querySelector('#self-view-name').style.display = 'none'
+  
+        document.querySelector('#startVideo').style.display = 'none'
+        document.querySelector('#stopVideo').style.display = 'inline-block'
+  
+        document.querySelector('#startVideo').textContent = 'Start Video'
+        // document.querySelector('#startVideo').disabled = false
+      // }
+    }).catch((error) => {
+      console.log(error)
     })
   } else {
-    zmStream.startVideo({ mirrored: true }).then(() => {
+    zmStream.startVideo({ mirrored: true,  hd: true }).then(() => {
       zmStream.renderVideo(document.querySelector('#self-view-canvas'), zmClient.getCurrentUserInfo().userId, 1920, 1080, 0, 0, 3).then(() => {
         document.querySelector('#self-view-canvas').style.display = 'block'
         document.querySelector('#self-view-name').style.display = 'none'
@@ -86,6 +120,8 @@ function startVideo() {
 
         document.querySelector('#startVideo').textContent = 'Start Video'
         document.querySelector('#startVideo').disabled = false
+      }).catch((error) => {
+        console.log(error)
       })
     }).catch((error) => {
       console.log(error)
@@ -216,8 +252,4 @@ zmClient.on('user-removed', (payload) => {
       document.querySelector('#participant-name').textContent = 'Participant left...'
     }
   }
-})
-
-zmClient.on('active-share-change', (payload) => {
-  console.log(payload)
 })
