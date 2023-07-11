@@ -17,23 +17,15 @@ let geoRegions
 let cloudRecordingOption
 let cloudRecordingElection
 
-zmClient.init('US-en', 'CDN')
+zmClient.init('US-en', 'CDN', {
+  leaveOnPageUnload: true
+})
 
 function getSignature() {
 
   document.querySelector('#getSignature').textContent = 'Joining Session...'
   document.querySelector('#getSignature').disabled = true
   document.querySelector('#error').style.display = 'none'
-
-  console.log(JSON.stringify({
-    sessionName: document.getElementById('sessionName').value || sessionName,
-    role: role,
-    userIdentity: userIdentity,
-    sessionKey: sessionKey,
-    geoRegions: geoRegions,
-    cloudRecordingOption: cloudRecordingOption,
-    cloudRecordingElection: cloudRecordingElection
-  }))
 
   fetch(signatureEndpoint, {
     method: 'POST',
@@ -52,6 +44,11 @@ function getSignature() {
     joinSession(data.signature)
   }).catch((error) => {
   	console.log(error)
+    document.querySelector('#error').style.display = 'block'
+    document.querySelector('#error').textContent = 'Something went wrong.'
+
+    document.querySelector('#getSignature').textContent = 'Join Session'
+    document.querySelector('#getSignature').disabled = false
   })
 }
 
@@ -64,15 +61,27 @@ function joinSession(signature) {
 
     if(zmClient.getAllUser().length > 2) {
       document.querySelector('#error').style.display = 'block'
+      document.querySelector('#error').textContent = 'Session full.'
       setTimeout(() => {
         leaveSession()
       }, 1000)
     } else {
       document.querySelector('#session').style.display = 'flex'
       document.querySelector('#landing').style.display = 'none'
+
+      if(zmClient.getAllUser().length > 1) {
+        document.querySelector('#participant-name').textContent = zmClient.getAllUser()[1].displayName
+      }
+
+      addEventListeners()
     }
   }).catch((error) => {
     console.log(error)
+    document.querySelector('#error').style.display = 'block'
+    document.querySelector('#error').textContent = error.reason
+
+    document.querySelector('#getSignature').textContent = 'Join Session'
+    document.querySelector('#getSignature').disabled = false
   })
 }
 
@@ -162,6 +171,8 @@ function unmuteAudio() {
 function leaveSession() {
   zmClient.leave()
 
+  removeEventListeners()
+
   document.querySelector('#session').style.display = 'none'
   document.querySelector('#muteAudio').style.display = 'none'
   document.querySelector('#unmuteAudio').style.display = 'none'
@@ -183,7 +194,25 @@ function leaveSession() {
   document.querySelector('#landing').style.display = 'flex'
 }
 
-zmClient.on('media-sdk-change', (payload) => {
+let connectionChange = ((payload) => {
+  console.log(payload)
+
+  if(payload.state === 'Reconnecting') {
+    document.querySelector('#participant-name').textContent = 'Lost connection, trying to reconnect...'
+  } else if(payload.state === 'Fail') {
+    document.querySelector('#participant-name').textContent = 'Disconnected.'
+
+    leaveSession()
+  } else if(payload.state === 'Connected') {
+    if(zmClient.getAllUser().length > 1) {
+      document.querySelector('#participant-name').textContent = zmClient.getAllUser()[1].displayName
+    } else {
+      document.querySelector('#participant-name').textContent = '⏳ Waiting for participant to join...'
+    }
+  }
+})
+
+let mediaSdkChange = ((payload) => {
   console.log(payload)
   const { action, type, result } = payload
   if (type === 'audio' && result === 'success') {
@@ -195,32 +224,7 @@ zmClient.on('media-sdk-change', (payload) => {
   }
 })
 
-zmClient.on('peer-video-state-change', (payload) => {
-
-  var interval
-
-  function ifZmStream() {
-    if(zmStream) {
-      clearInterval(interval)
-
-      if(payload.action === 'Start') {
-        zmStream.renderVideo(document.querySelector('#participant-canvas'), payload.userId, 1920, 1080, 0, 0, 3).then(() => {
-          document.querySelector('#participant-canvas').style.display = 'block'
-          document.querySelector('#participant-name').style.display = 'none'
-        })
-      } else if(payload.action === 'Stop') {
-        zmStream.stopRenderVideo(document.querySelector('#participant-canvas'), payload.userId).then(() => {
-          document.querySelector('#participant-canvas').style.display = 'none'
-          document.querySelector('#participant-name').style.display = 'block'
-        })
-      }
-    }
-  }
-
-  interval = setInterval(ifZmStream, 1000)
-})
-
-zmClient.on('user-added', (payload) => {
+let userAdded = ((payload) => {
 
   if(zmClient.getAllUser().length < 3) {
     if(payload[0].userId !== zmClient.getCurrentUserInfo().userId) {
@@ -229,11 +233,51 @@ zmClient.on('user-added', (payload) => {
   }
 })
 
-zmClient.on('user-removed', (payload) => {
+let userUpdated = ((payload) => {
+  console.log(payload)
 
-  if(zmClient.getAllUser().length < 2) {
-    if(payload.length && payload[0].userId !== zmClient.getCurrentUserInfo().userId) {
-      document.querySelector('#participant-name').textContent = 'Participant left...'
+  if(payload[0].userId !== zmClient.getCurrentUserInfo().userId) {
+    
+    if(payload[0].hasOwnProperty('bVideoOn') && payload[0].bVideoOn === true) {
+      zmStream.renderVideo(document.querySelector('#participant-canvas'), payload[0].userId, 1920, 1080, 0, 0, 3).then(() => {
+        document.querySelector('#participant-canvas').style.display = 'block'
+        document.querySelector('#participant-name').style.display = 'none'
+      })
+    } else if(payload[0].hasOwnProperty('bVideoOn') && payload[0].bVideoOn === false) {
+      zmStream.stopRenderVideo(document.querySelector('#participant-canvas'), payload[0].userId).then(() => {
+        document.querySelector('#participant-canvas').style.display = 'none'
+        document.querySelector('#participant-name').style.display = 'block'
+      })
     }
   }
 })
+
+let userRemoved = ((payload) => {
+  console.log(payload)
+  if(zmClient.getAllUser().length < 2) {
+    if(payload.length && payload[0].userId !== zmClient.getCurrentUserInfo().userId) {
+      document.querySelector('#participant-name').textContent = 'Participant left...'
+
+      zmStream.stopRenderVideo(document.querySelector('#participant-canvas'), payload[0].userId).then(() => {
+        document.querySelector('#participant-canvas').style.display = 'none'
+        document.querySelector('#participant-name').style.display = 'block'
+      })
+    }
+  }
+})
+
+function addEventListeners() {
+  zmClient.on('media-sdk-change', mediaSdkChange)
+  zmClient.on('connection-change', connectionChange)
+  zmClient.on('user-added', userAdded)
+  zmClient.on('user-updated', userUpdated)
+  zmClient.on('user-removed', userRemoved)
+}
+
+function removeEventListeners() {
+  zmClient.off('media-sdk-change', mediaSdkChange)
+  zmClient.off('connection-change',connectionChange)
+  zmClient.off('user-added', userAdded)
+  zmClient.off('user-updated', userUpdated)
+  zmClient.off('user-removed', userRemoved)
+}

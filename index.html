@@ -10,10 +10,10 @@
     <main>
       <div id="landing">
         <h2>1:1 Video Chat 💬</h2>
-        <small id="error">Session full, join another.</small>
-        <input type="text" placeholder="😃 Your Name" id="userName">
-        <input type="text" placeholder="🚪 Session Name" id="sessionName">
-        <input type="text" placeholder="🔑 Session Passcode" id="sessionPasscode">
+        <small id="error"></small>
+        <input type="text" placeholder="😃 Your Name" id="userName" autocomplete="off">
+        <input type="text" placeholder="🚪 Session Name" id="sessionName" autocomplete="off">
+        <input type="text" placeholder="🔑 Session Passcode" id="sessionPasscode" autocomplete="off">
         <button onClick="getSignature()" class="primary" id="getSignature">Join Session</button>
         <small class="zoom">Powered by the <a href="https://developers.zoom.us/docs/video-sdk/" target="_blank">Zoom Video SDK</a></small>
       </div>
