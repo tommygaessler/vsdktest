@@ -17,9 +17,7 @@ let geoRegions
 let cloudRecordingOption
 let cloudRecordingElection
 
-zmClient.init('US-en', 'CDN', {
-  leaveOnPageUnload: true
-})
+zmClient.init('US-en')
 
 function getSignature() {
 
