@@ -17,7 +17,9 @@ let geoRegions
 let cloudRecordingOption
 let cloudRecordingElection
 
-zmClient.init('US-en')
+zmClient.init('US-en', 'Global', {
+  enforceMultipleVideos: true
+})
 
 function getSignature() {
 
