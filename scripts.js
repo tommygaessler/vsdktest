@@ -71,6 +71,13 @@ function joinSession(signature) {
 
       if(zmClient.getAllUser().length > 1) {
         document.querySelector('#participant-name').textContent = zmClient.getAllUser()[1].displayName
+
+        if(zmClient.getAllUser()[1].bVideoOn) {
+          zmStream.renderVideo(document.querySelector('#participant-canvas'), zmClient.getAllUser()[1].userId, 1920, 1080, 0, 0, 3).then(() => {
+            document.querySelector('#participant-canvas').style.display = 'block'
+            document.querySelector('#participant-name').style.display = 'none'
+          })
+        }
       }
 
       addEventListeners()
