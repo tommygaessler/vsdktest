@@ -18,7 +18,8 @@ let cloudRecordingOption
 let cloudRecordingElection
 
 zmClient.init('US-en', 'Global', {
-  enforceMultipleVideos: true
+  enforceMultipleVideos: true,
+  patchJsMedia: true
 })
 
 function getSignature() {
